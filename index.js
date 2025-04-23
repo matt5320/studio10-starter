@@ -9,10 +9,27 @@ createApp({
       myMessage: "",
       sending: false,
       channels: ["designftw"],
+      channel: "",
     };
   },
 
   methods: {
+    async createGroupChat(session) {
+      await this.$graffiti.put(
+        {
+          value: {
+            activity: "Create",
+            object: {
+              type: "Group Chat",
+              name: "My Group Chat", // Make this editable
+              channel: crypto.randomUUID(), // This creates a random string
+            },
+          },
+          channels: ["designftw"],
+        },
+        session
+      );
+    },
     async sendMessage(session) {
       if (!this.myMessage) return;
 
@@ -24,9 +41,9 @@ createApp({
             content: this.myMessage,
             published: Date.now(),
           },
-          channels: this.channels,
+          channels: [this.channel],
         },
-        session,
+        session
       );
 
       this.sending = false;
